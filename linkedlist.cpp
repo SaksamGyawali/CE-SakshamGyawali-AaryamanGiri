@@ -12,4 +12,5 @@ class Node{
 
 class LinkedBST: public BST {
    
+   
 };
