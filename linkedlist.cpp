@@ -4,10 +4,10 @@
 class Node{
    public:
 
-   int data;
+   int key;
    Node* left;
    Node* right;
-   Node(int data):data(data), left(nullptr),right(nullptr)  {}      
+   Node(int data):key(data), left(nullptr),right(nullptr)  {}      
 };
 
 class LinkedBST: public BST {
