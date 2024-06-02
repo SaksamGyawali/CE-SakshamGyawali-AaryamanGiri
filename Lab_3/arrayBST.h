@@ -13,7 +13,7 @@ struct ArrayNode
 };
 
 // ArrayBinarySearchTree class definition
-class ArrayBinarySearchTree : public InterfaceBST
+class ArrayBinarySearchTree : public BST
 {
 public:
     ArrayBinarySearchTree();
