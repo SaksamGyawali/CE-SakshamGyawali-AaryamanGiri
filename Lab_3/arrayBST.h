@@ -1,38 +1,28 @@
+#define ArrayBST_h
+#define MAX_NUM_NODES 128
 #include "bst.h"
-struct Node{
-    int data;
+
+// ArrayNode structure
+struct ArrayNode
+{
+    int value;
+    bool isOccupied;
+
+    ArrayNode() : value(0), isOccupied(false) {}
+    ArrayNode(int value) : value(value), isOccupied(true) {}
 };
 
-class arrayBST{
-    Node *data_user;
-    int nodeCount{};
-    bool resize();
-    bool isFull();
-        public:
-        arrayBST(){
-            data_user = new Node[1];
-        }
-        ~arrayBST(){
-            delete []data_user;
-        }
-            bool isEmpty() const;
-            void addBST(int data);
-            bool removeBST(int data);
-            bool searchBST(int targetKey) const;
+// ArrayBinarySearchTree class definition
+class ArrayBinarySearchTree : public InterfaceBST
+{
+public:
+    ArrayBinarySearchTree();
+    ~ArrayBinarySearchTree();
+    virtual bool isEmpty();
+    virtual void addBST(int data);
+    virtual bool removeBST(int keyToDelete);
+    virtual bool searchBST(int targetKey);
+
+private:
+    ArrayNode *nodes[MAX_NUM_NODES];
 };
-
-bool arrayBST::isEmpty() const{
-    
-}
-
-void arrayBST::addBST(int data){
-
-}
-
-bool arrayBST::removeBST(int data){
-
-}
-
-bool arrayBST::searchBST(int targetKey) const{
-
-}
