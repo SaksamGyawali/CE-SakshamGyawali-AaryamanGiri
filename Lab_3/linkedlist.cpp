@@ -1,121 +1,184 @@
 #include <iostream>
-#include "bst.h"
+#include "linkedlistBST.h"
 
-class Node
+using namespace std;
+
+LinkedBST::LinkedBST() : root(nullptr) {}
+LinkedBST::~LinkedBST()
 {
-public:
-  int key;
-  Node *left;
-  Node *right;
-  Node *pred;
-  Node(int data) : key(data), left(nullptr), right(nullptr) {}
-};
+    delete root;
+}
 
-Node *Root;
-
-class LinkedBST : public BST
+bool LinkedBST::isEmpty()
 {
+    return root == nullptr;
+}
 
-private:
-  Node *root;
+void LinkedBST::addBST(int data)
+{
+    Node *newNode = new Node(data);
+    if (isEmpty())
+    {
+        root = newNode;
+        return;
+    }
 
-  Node *addBST(Node *node, int key)
-  {
-    if (node == nullptr)
+    Node *temp = root;
+    Node *parent = nullptr;
+    while (temp != nullptr)
     {
-      return new Node(key);
+        parent = temp;
+        if (data < temp->key)
+        {
+            temp = temp->leftChild;
+        }
+        else
+        {
+            temp = temp->rightChild;
+        }
     }
-    if (key < node->key)
+    if (data < parent->key)
     {
-      node->left = addBST(node->left, key);
-    }
-    else if (key > node->key)
-    {
-      node->right = addBST(node->right, key);
-    }
-    return node;
-  }
-
-  Node *findMin(Node *node)
-  {
-    while (node->left != nullptr)
-    {
-      node = node->left;
-    }
-    return node;
-  }
-
-  Node *removeBST(Node *node, int key)
-  {
-    if (node == nullptr)
-      return node;
-
-    if (key < node->key)
-    {
-      node->left = removeBST(node->left, key);
-    }
-    else if (key > node->key)
-    {
-      node->right = removeBST(node->right, key);
+        parent->leftChild = newNode;
     }
     else
     {
-      if (node->left == nullptr)
-      {
-        Node *temp = node->right;
-        delete node;
-        return temp;
-      }
-      else if (node->right == nullptr)
-      {
-        Node *temp = node->left;
-        delete node;
-        return temp;
-      }
-
-      Node *temp = findMin(node->right);
-      node->key = temp->key;
-      node->right = removeBST(node->right, temp->key);
+        parent->rightChild = newNode;
     }
-    return node;
-  }
+    newNode->parent = parent;
+}
 
-  bool searchBST(Node *node, int targetKey) const
-  {
-    if (node == nullptr)
-      return false;
-    if (node->key == targetKey)
-      return true;
-    if (targetKey < node->key)
-      return searchBST(node->left, targetKey);
-    return searchBST(node->right, targetKey);
-  }
-
-public:
-  LinkedBST() : root(nullptr) {}
-
-  bool isEmpty() override
-  {
-    return root == nullptr;
-  }
-
-  void addBST(int key) override
-  {
-    root = addBST(root, key);
-  }
-
-  bool removeBST(int key) override
-  {
-    if (searchBST(root, key))
+bool LinkedBST::removeBST(int keyToDelete)
+{
+    Node *temp = root;
+    Node *parent = nullptr;
+    while (temp != nullptr && temp->key != keyToDelete)
     {
-      root = removeBST(root, key);
-      return true;
+        parent = temp;
+        if (keyToDelete < temp->key)
+        {
+            temp = temp->leftChild;
+        }
+        else
+        {
+            temp = temp->rightChild;
+        }
+    }
+
+    if (temp == nullptr)
+    {
+        return false; // Key not found
+    }
+    // if not this, then key is in temp
+
+    // Case 1: Node has no children
+    if (temp->leftChild == nullptr && temp->rightChild == nullptr)
+    {
+        if (parent == nullptr)
+        {
+            root = nullptr;
+        }
+        else if (parent->leftChild == temp)
+        {
+            parent->leftChild = nullptr;
+        }
+        else
+        {
+            parent->rightChild = nullptr;
+        }
+        delete temp;
+    }
+    // Case 2: Node has one child
+    else if (temp->leftChild == nullptr)
+    {
+        if (parent == nullptr)
+        {
+            root = temp->rightChild;
+        }
+        else if (parent->leftChild == temp)
+        {
+            parent->leftChild = temp->rightChild;
+        }
+        else
+        {
+            parent->rightChild = temp->rightChild;
+        }
+        delete temp;
+    }
+    else if (temp->rightChild == nullptr)
+    {
+        if (parent == nullptr)
+        {
+            root = temp->leftChild;
+        }
+        else if (parent->leftChild == temp)
+        {
+            parent->leftChild = temp->leftChild;
+        }
+        else
+        {
+            parent->rightChild = temp->leftChild;
+        }
+        delete temp;
+    }
+    // Case 3: Node has two children
+    else
+    {
+        Node *successor = temp->rightChild;
+        Node *successorParent = temp;
+        while (successor->leftChild != nullptr)
+        {
+            successorParent = successor;
+            successor = successor->leftChild;
+        }
+
+        if (successorParent != temp)
+        {
+            successorParent->leftChild = successor->rightChild;
+        }
+        else
+        {
+            successorParent->rightChild = successor->rightChild;
+        }
+
+        temp->key = successor->key;
+        delete successor;
+    }
+
+    return true;
+}
+
+bool LinkedBST::searchBST(int targetKey)
+{
+    Node *temp = root;
+    while (temp != nullptr)
+    {
+        if (targetKey == temp->key)
+        {
+            return true;
+        }
+        else if (targetKey < temp->key)
+        {
+            temp = temp->leftChild;
+        }
+        else
+        {
+            temp = temp->rightChild;
+        }
     }
     return false;
-  }
-
-  bool searchBST(int targetKey) const override
-  {
-    return searchBST(root, targetKey);
-  }
-};
+}
+void LinkedBST::inorder(Node *node)
+{
+    if (node == nullptr)
+        return;
+    inorder(node->leftChild);
+    cout << "Node data: " << node->key << endl;
+    inorder(node->rightChild);
+}
+void LinkedBST::display()
+{
+    cout << endl;
+    inorder(root);
+    cout << endl;
+}
