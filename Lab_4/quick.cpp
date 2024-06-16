@@ -1,25 +1,65 @@
+#include <iostream>
 #include "quicksort.h"
-#include <algorithm>
 
-int partition(std::vector<int>&array, int low, int high) {
-    int pivot = array[high];
-    int i = (low - 1);
+using namespace std;
 
-    for (int j = low; j <= high - 1; j++) {
-        if (array[j] < pivot) {
-            i++;
-            std::swap(array[i], array[j]);
-        }
-    }
-    std::swap(array[i + 1], array[high]);
-    return (i + 1);
+int partition(int arr[], int start, int end)
+{
+
+	int pivot = arr[start];
+
+	int count = 0;
+	for (int i = start + 1; i <= end; i++) {
+		if (arr[i] <= pivot)
+			count++;
+	}
+
+	// Giving pivot element its correct position
+	int pivotIndex = start + count;
+	swap(arr[pivotIndex], arr[start]);
+
+	// Sorting left and right parts of the pivot element
+	int i = start, j = end;
+
+	while (i < pivotIndex && j > pivotIndex) {
+
+		while (arr[i] <= pivot) {
+			i++;
+		}
+
+		while (arr[j] > pivot) {
+			j--;
+		}
+
+		if (i < pivotIndex && j > pivotIndex) {
+			swap(arr[i++], arr[j--]);
+		}
+	}
+
+	return pivotIndex;
 }
 
-void quicksort(std::vector<int>&array, int low, int high) {
-    if (low < high) {
-        int pi = partition(array, low, high);
+void quickSort(int arr[], int start, int end)
+{
 
-        quicksort(array, low, pi - 1);
-        quicksort(array, pi + 1, high);
+	// base case
+	if (start >= end)
+		return;
+
+	// partitioning the array
+	int p = partition(arr, start, end);
+
+	// Sorting the left part
+	quickSort(arr, start, p - 1);
+
+	// Sorting the right part
+	quickSort(arr, p + 1, end);
+}
+
+// Function to print the array
+void printArray(const int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        std::cout << arr[i] << " ";
     }
+    std::cout << std::endl;
 }

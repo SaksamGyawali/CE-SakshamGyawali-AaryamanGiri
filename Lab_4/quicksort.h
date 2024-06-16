@@ -1,5 +1,5 @@
-#include <iostream>
-#include <vector>
+using namespace std;
 
-int partition(std::vector<int> &array, int low, int high);
-void quicksort(std::vector<int> &array, int low, int high);
+int partition(int arr[], int start, int end);
+void quickSort(int arr[], int start, int end);
+void printArray(const int arr[], int n);
